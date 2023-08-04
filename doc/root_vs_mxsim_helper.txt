@@ -1,0 +1,218 @@
+#
+# root_vs_mxsim_helper.txt
+#
+
+////
+//// 1次元ヒストグラムの作成方法：
+//// 0 から4.4の間を100ビンに分ける場合：
+////
+
+/// rootの場合:
+TH1D *h1 = new TH1D("h1", "h1 title", 100, 0, 4.4);
+
+/// mxcstoolの場合:
+// 縦軸のエラー無しの場合：
+HistDataNerr1d* hd1d = new HistDataNerr1d;
+hd1d->Init(100, 0, 4.4);
+
+// 縦軸のエラーが対称エラーの場合：
+HistDataSerr1d* hd1d = new HistDataSerr1d;
+hd1d->Init(100, 0, 4.4);
+
+////
+//// 1次元ヒストグラムのビンの値を取得する方法
+////
+
+/// rootの場合:
+int ibin = 10;
+double yval = h1->GetBinContent(ibin);
+でできるが、ibinの番号とx軸の値との関係が分かりにくい。
+root のreference manual には以下のように書いてある。
+
+  For all histogram types: nbins, xlow, xup
+  bin = 0; underflow bin
+  bin = 1; first bin with low-edge xlow INCLUDED
+  bin = nbins; last bin with upper-edge xup EXCLUDED
+  bin = nbins+1; overflow bin
+
+あるいは、
+double xval = 2.5;
+int ibin = h1->FindBin(xval);
+double yval = h1->GetBinContent(ibin);
+
+/// の場合:
+double xval = 2.5;
+double yval = hd1d->GetOvalElmAtX(xval);
+
+または、
+double xval = 2.5;
+int ibin = hd1d->GetIbin(xval);
+double yval = hd1d->GetOvalElm(ibin);
+
+
+////
+//// 1次元ヒストグラムのビンに値を詰める方法
+////
+
+/// rootの場合:
+double xval = 2.5;
+int ibin = h1->FindBin(xval);
+double yval = 777.7;
+h1->SetBinContent(ibin, yval);
+
+/// mxsim_helperの場合:
+double xval = 2.5;
+int ibin = hd1d->GetIbin(xval);
+double yval = 777.7;
+hd1d->SetOvalElm(ibin, yval);
+
+
+////
+//// 1次元ヒストグラムのbinの数を得る方法
+////
+
+/// rootの場合:
+int nbin = h1->GetNbinsX();
+または、
+int nbin = h1->GetXaxis()->GetNbins();
+
+/// mxsim_helperの場合:
+int nbin = hd1d->GetNbinX();
+
+/////////////////////////////////////
+
+
+////
+//// 2次元ヒストグラムの作成方法
+////
+//// x軸方向: 0から4.4の間を100ビンに分ける
+//// y軸方向: 10から20の間を200ビンに分ける
+////
+
+/// rootの場合:
+TH2D *h2 = new TH2D("h2", "h2 title", 100, 0, 4.4, 200, 10.0, 20.0);
+
+/// mxsim_helperの場合:
+// 縦軸のエラー無しの場合：
+HistDataNerr2d* hd2d = new HistDataNerr2d;
+hd2d->Init(100, 0, 4.4, 200, 10.0, 20.0);
+
+// 縦軸のエラーが対称エラーの場合：
+HistDataSerr2d* hd2d = new HistDataSerr2d;
+hd2d->Init(100, 0, 4.4, 200, 10.0, 20.0);
+
+////
+//// 2次元ヒストグラムのビン番号を得る方法
+////
+
+/// rootの場合:
+double xval = 2.5;
+double yval = 14.0;
+int ibinx = h2->GetXaxis()->FindBin(xval);
+int ibiny = h2->GetYaxis()->FindBin(yval);
+
+/// mxsim_helperの場合:
+double xval = 2.5;
+double yval = 14.0;
+int ibinx = hd2d->GetHi2d()->GetIbinXFromX(xval);
+int ibiny = hd2d->GetHi2d()->GetIbinYFromY(yval);
+
+////
+//// 2次元ヒストグラムのビン数を得る方法
+////
+
+/// rootの場合:
+int nbinx = h2->GetNbinsX();
+int nbiny = h2->GetNbinsY();
+または、
+int nbinx = h2->GetXaxis()->GetNbins();
+int nbiny = h2->GetYaxis()->GetNbins();
+
+/// mxsim_helperの場合:
+int nbinx = hd2d->GetNbinX();
+int nbiny = hd2d->GetNbinY();
+
+////
+//// 2次元ヒストグラムのビンの下端の値を得る方法
+////
+
+/// rootの場合:
+int ibinx = 10;
+double xval_lo = h2->GetXaxis()->GetBinLowEdge(ibinx);
+
+/// mxsim_helperの場合:
+double xval_lo = hd2d->GetHi2d()->GetHistInfoX()->GetBinLo(ibinx);
+
+
+////
+//// 2次元ヒストグラムのビンの上端の値を得る方法
+////
+
+/// rootの場合:
+int ibinx = 10;
+double xval_up = h2->GetXaxis()->GetBinUpEdge(ibinx);
+
+/// mxsim_helperの場合:
+int ibinx = 10;
+double xval_up = hd2d->GetHi2d()->GetHistInfoX()->GetBinUp(ibinx);
+
+
+////
+//// ２次元ヒストグラムの形状をした確率分布から乱数を得る方法
+////
+
+/// rootの場合:
+double xval;
+double yval;
+h2->GetRandom2(&xval, &yval);
+
+/// mxsim_helperの場合
+// 1次元ヒストグラムに対しては以下の関数が作成してある。
+
+int nevt = 1000; // 1000 event
+int rand_seed = 0; // 毎回異なる乱数。
+int rand_seed = 1,2,... // seedを固定した乱数。
+double* xval_arr = NULL;
+hd1d->GenRandomEvtFromProbDist(nevt, rand_seed,
+                               &xval_arr);
+
+// 2次元ヒストグラム
+
+double* xval_arr = NULL;
+double* yval_arr = NULL;
+int nevt = 10000;
+int rand_seed = 0;
+hd2d->GenRandomEvtFromProbDist(nevt, rand_seed,
+                               &xval_arr, &yval_arr);
+
+////
+//// ２次元ヒストグラムを１次元に射影する方法
+////
+
+/// rootの場合
+
+h2->ProjectionX()
+
+/// mxsim_helperの場合
+
+HistDataSerr1d* hd1d = NULL;
+HistData2dOpe::GetProjectX(hd2d, ibin_ylo, ibin_yup, 
+                           calc_mode, error_mode, hd1d);
+ここで、project するY軸の範囲は、ibin_ylo からibin_yup まで。
+project するときの計算方法： calc_mode,
+error の計算方法： error_mode
+// calc_mode : "add", "integral", "amean", "min", "max",  "stddev"
+// error_mode: gauss, poisson, zero
+
+////
+//// 数学的な関数の表現方法
+////
+
+/// rootの場合
+
+TF1で関数を定義する。->Eval() で値を得る。
+
+/// mxsim_helperの場合:
+
+MxcsFuncクラスを継承して特定の数学関数のクラスを定義する。
+継承して作ったクラスに対して、->Eval1d(xval, par) で値を得る。
