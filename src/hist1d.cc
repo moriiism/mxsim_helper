@@ -336,7 +336,13 @@ void HistData1d::GenRandomEvtFromProbDist(
     for(int ievt = 0; ievt < nevt; ievt++){
         double rand = mrand->Uniform();
         long ibin_find = MshpSort::BinarySearch(nbin, cum_arr, rand);
-        xval_arr[ievt] = GetBinCenter(ibin_find + 1);
+        double bin_lo = GetBinLo(ibin_find + 1);
+        double bin_up = GetBinUp(ibin_find + 1);
+        double bin_width = bin_up - bin_lo;
+        double rand_in_bin = mrand->Uniform();
+        xval_arr[ievt] = bin_lo + rand_in_bin * bin_width;
+
+        // xval_arr[ievt] = GetBinCenter(ibin_find + 1);
     }
     delete mrand;
     delete [] data_norm;

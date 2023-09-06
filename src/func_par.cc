@@ -61,9 +61,9 @@ void MshpFuncPar::Load(string file)
         SetElm(iline, par_name_tmp, par_tmp);
     }
     MshpIolib::DelReadFile(line_arr);
-    if(0 < g_flag_verbose){
-        MshpPrintInfoClass("done.");
-    }
+    //if(0 < g_flag_verbose){
+    //    MshpPrintInfoClass("done.");
+    //}
 }
 
 

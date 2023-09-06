@@ -305,8 +305,22 @@ void HistData2d::GenRandomEvtFromProbDist(
     for(int ievt = 0; ievt < nevt; ievt++){
         double rand = mrand->Uniform();
         long ibin_find = MshpSort::BinarySearch(nbin, cum_arr, rand);
-        xval_arr[ievt] = GetHi2d()->GetBinCenterXFromIbin(ibin_find + 1);
-        yval_arr[ievt] = GetHi2d()->GetBinCenterYFromIbin(ibin_find + 1);
+
+        long ibinx = GetHi2d()->GetIbinX(ibin_find + 1);
+        long ibiny = GetHi2d()->GetIbinY(ibin_find + 1);
+        double binx_lo = GetHi2d()->GetHistInfoX()->GetBinLo(ibinx);
+        double binx_up = GetHi2d()->GetHistInfoX()->GetBinUp(ibinx);
+        double biny_lo = GetHi2d()->GetHistInfoY()->GetBinLo(ibiny);
+        double biny_up = GetHi2d()->GetHistInfoY()->GetBinUp(ibiny);
+        double binx_width = binx_up - binx_lo;
+        double biny_width = biny_up - biny_lo;
+        double rand_in_binx = mrand->Uniform();
+        double rand_in_biny = mrand->Uniform();
+        xval_arr[ievt] = binx_lo + rand_in_binx * binx_width;
+        yval_arr[ievt] = biny_lo + rand_in_biny * biny_width;
+
+        //xval_arr[ievt] = GetHi2d()->GetBinCenterXFromIbin(ibin_find + 1);
+        //yval_arr[ievt] = GetHi2d()->GetBinCenterYFromIbin(ibin_find + 1);
     }
     delete mrand;
     delete [] data_norm;
@@ -436,9 +450,9 @@ void HistData2d::ReadInfo(string file,
     *yval_up_ptr = yval_up;    
     *format_ptr = format;
 
-    if(0 < g_flag_verbose){
-        MshpPrintInfo("done.");
-    }
+    //if(0 < g_flag_verbose){
+    //    MshpPrintInfo("done.");
+    //}
 }
 
 

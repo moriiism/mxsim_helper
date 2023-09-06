@@ -107,6 +107,11 @@ int main(int argc, char* argv[])
         hd1d->GenRandomEvtFromProbDist(nevt, rand_seed,
                                        &xval_arr);
         delete hd1d;
+
+        for(int ievt = 0; ievt < nevt; ievt ++){
+            printf("%d %f\n", ievt, xval_arr[ievt]);
+        }
+        
         printf("=== \n");
     }
     

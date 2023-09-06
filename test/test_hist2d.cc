@@ -75,12 +75,12 @@ int main(int argc, char* argv[])
 
         double* xval_arr = NULL;
         double* yval_arr = NULL;
-        int nevt = 10000;
+        int nevt = 1000;
         int rand_seed = 0;
         hd2d->GenRandomEvtFromProbDist(nevt, rand_seed,
                                        &xval_arr, &yval_arr);
         for(int ievt = 0; ievt < nevt; ievt++){
-            printf("%e, %e\n", xval_arr[ievt], yval_arr[ievt]);
+            printf("%e %e\n", xval_arr[ievt], yval_arr[ievt]);
         }
 
 
